@@ -1,0 +1,30 @@
+import { JSDOM } from 'jsdom';
+import fs from 'fs';
+const html=fs.readFileSync('/home/claude/DwarfWiki/static/index.html','utf8');
+const dom=new JSDOM(html,{runScripts:'outside-only',url:'http://127.0.0.1:5000/',pretendToBeVisual:true});
+const {window}=dom;
+window.HTMLCanvasElement.prototype.getContext=()=>({fillRect(){},drawImage(){},getImageData:(x,y,w,h)=>({data:new Uint8ClampedArray(w*h*4)}),createImageData:(w,h)=>({data:new Uint8ClampedArray(w*h*4)}),putImageData(){},beginPath(){},arc(){},fill(){},stroke(){},save(){},restore(){},measureText:()=>({width:10}),createRadialGradient:()=>({addColorStop(){}})});
+window.fetch=(u,o)=>fetch(typeof u==='string'&&u.startsWith('/')?'http://127.0.0.1:5000'+u:u,o);
+window.Image=class{constructor(){this.complete=true;this.naturalWidth=257;} set src(v){this._src=v;this.onload&&setTimeout(()=>this.onload(),1);} get src(){return this._src;}};
+const errors=[];
+window.onerror=(m)=>errors.push('onerror: '+m);
+process.on('unhandledRejection',r=>errors.push('rejection: '+(r&&r.message||r)));
+for(const f of ['vectorborders.js','map.js']) window.eval(fs.readFileSync('/home/claude/DwarfWiki/static/'+f,'utf8'));
+window.eval(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+try{ await window.eval('boot()'); }catch(e){ errors.push('boot: '+e.message); }
+await new Promise(r=>setTimeout(r,1200));
+window.eval("location.hash='#/w/region1/hf/1'");
+await new Promise(r=>setTimeout(r,300));
+try{ await window.eval('route()'); }catch(e){ errors.push('route: '+e.message+'\n'+(e.stack||'')); }
+await new Promise(r=>setTimeout(r,1500));
+const d=window.document;
+const v=d.getElementById('view');
+console.log('view length:', v.innerHTML.length);
+console.log('Tools menus rendered:', d.querySelectorAll('.tools-menu').length);
+console.log('section gallery slots:', d.querySelectorAll('.section-gallery').length);
+console.log('lore sections:', d.querySelectorAll('.lore-section').length);
+console.log('vital record present:', !!d.querySelector('.factbox'));
+const ag=d.querySelector('.age-at-death');
+console.log('age-at-death shown:', ag? ag.textContent : '(figure is alive or no birth year)');
+console.log('fb-group blocks:', d.querySelectorAll('.fb-group').length);
+console.log('\nERRORS:', errors.length? errors.join('\n') : 'none');

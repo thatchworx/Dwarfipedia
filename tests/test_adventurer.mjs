@@ -1,0 +1,77 @@
+import { JSDOM } from 'jsdom';
+import fs from 'fs';
+const html=fs.readFileSync('/home/claude/DwarfWiki/static/index.html','utf8');
+const dom=new JSDOM(html,{runScripts:'outside-only',url:'http://127.0.0.1:5000/',pretendToBeVisual:true});
+const {window}=dom;
+window.HTMLCanvasElement.prototype.getContext=function(){const n=()=>{};return{canvas:this,fillStyle:'',strokeStyle:'',font:'',globalAlpha:1,lineWidth:1,textAlign:'',textBaseline:'',imageSmoothingEnabled:false,lineJoin:'',lineCap:'',fillRect:n,strokeRect:n,clearRect:n,beginPath:n,closePath:n,moveTo:n,lineTo:n,arc:n,fill:n,stroke:n,save:n,restore:n,translate:n,drawImage:n,fillText:n,putImageData:n,measureText:t=>({width:10}),createImageData:(w,h)=>({width:w,height:h,data:new Uint8ClampedArray(w*h*4)}),getImageData:(x,y,w,h)=>({width:w,height:h,data:new Uint8ClampedArray(Math.max(1,w*h)*4)})};};
+window.fetch=(u,o)=>fetch(typeof u==='string'&&u.startsWith('/')?'http://127.0.0.1:5000'+u:u,o);
+window.Image=class{constructor(){this.complete=true;this.naturalWidth=257;} set src(v){this._src=v;this.onload&&setTimeout(()=>this.onload(),1);} get src(){return this._src;}};
+window.confirm=()=>true; window.prompt=()=>'x';
+const errors=[]; window.onerror=m=>errors.push(m);
+process.on('unhandledRejection',r=>errors.push('rejection: '+(r&&r.message||r)));
+for(const f of ['vectorborders.js','map.js','wall.js','adv_data.js','adventurer.js'])
+  window.eval(fs.readFileSync('/home/claude/DwarfWiki/static/'+f,'utf8'));
+window.eval(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+await window.eval('boot()'); await new Promise(r=>setTimeout(r,1200));
+const d=window.document;
+window.eval("location.hash='#/w/region1/adventurers'"); await new Promise(r=>setTimeout(r,150));
+try{ await window.eval('route()'); }catch(e){ errors.push('route: '+e.message+'\n'+(e.stack||'')); }
+await new Promise(r=>setTimeout(r,1200));
+const Adv=window.Adv;
+console.log('roster rendered:', d.querySelectorAll('.adv-roster, .stats-soon').length>0);
+console.log('=== create + sheet ===');
+Adv.newCharacter(); await new Promise(r=>setTimeout(r,600));
+console.log('  sheet tabs:', d.querySelectorAll('.as-tabs button').length);
+Adv.field('name','Urist Ironhand'); Adv.field('race','dwarf');
+console.log('  name set:', Adv._S.cur.name);
+console.log('=== skills & attributes ===');
+Adv.setTab('skills'); await new Promise(r=>setTimeout(r,300));
+console.log('  attribute rows:', d.querySelectorAll('.attr-row').length, '(expect 19)');
+Adv.toggleUnskilled();
+console.log('  skill rows when showing unskilled:', d.querySelectorAll('.sk-row').length, '(expect 134)');
+for(let i=0;i<5;i++) Adv.bumpSkill('Swordsman',1);
+console.log('  Swordsman after 5 bumps:', window.ADV.SKILL_LEVELS[Adv._S.cur.skills['Swordsman']].name);
+Adv.bumpAttr('Strength',-1); Adv.bumpAttr('Strength',-1);
+console.log('  Strength after 2 "+" presses:', window.ADV.ATTR_SCALE[Adv._S.cur.attributes['Strength']], '(should improve toward awesome)');
+Adv.bumpSkill('Miner',-99); console.log('  clamps at floor (Miner):', Adv._S.cur.skills['Miner'], '| Swordsman still:', Adv._S.cur.skills['Swordsman']);
+console.log('=== journal & quests ===');
+Adv.setTab('journal'); Adv.addJournal();
+const je=Adv._S.cur.journal[0];
+Adv.beginEdit('journal',je.id);
+Adv.itemField('journal',je.id,'title','The stolen crown');
+Adv.itemField('journal',je.id,'text','North-east a days walk. Turn in to [[Uvash Gemcutter]].');
+Adv.setDate('when','year',172); Adv.setDate('when','month',7); Adv.setDate('when','day',12);
+Adv.renderBody(); await new Promise(r=>setTimeout(r,200));
+console.log('  journal entries:', d.querySelectorAll('.jr').length);
+console.log('  date renders as:', Adv.fmtDate(Adv._S.cur.journal[0],'when'));
+console.log('  [[link]] extracted:', d.querySelectorAll('.jr-link').length);
+Adv.setTab('quests'); Adv.addQuest();
+const q=Adv._S.cur.quests[0]; Adv.itemField('quests',q.id,'state','completed');
+await new Promise(r=>setTimeout(r,200));
+console.log('  quest groups:', d.querySelectorAll('.q-grp').length, '| completed items:', d.querySelectorAll('.q-completed .q-item').length);
+console.log('=== associates / inventory ===');
+Adv.setTab('associates'); Adv.addAssociate(); Adv.addCompanion(); Adv.addAffiliation();
+await new Promise(r=>setTimeout(r,200));
+console.log('  assoc rows:', d.querySelectorAll('.assoc').length, '(expect 3)');
+Adv.setTab('inventory'); Adv.addItem();
+await new Promise(r=>setTimeout(r,200));
+console.log('  inventory rows:', d.querySelectorAll('.inv-row').length);
+console.log('=== tools ===');
+Adv.setTab('tools'); await new Promise(r=>setTimeout(r,200));
+Adv.roll('2d6+3');
+console.log('  roll 2d6+3 =', Adv._S.dice.last.total, '|', Adv._S.dice.last.detail);
+Adv.calc('12*28');
+console.log('  calc 12*28 =', Adv._S.calc.out);
+console.log('=== persistence ===');
+await Adv.save(true); await new Promise(r=>setTimeout(r,500));
+await Adv.loadList();
+const curId=Adv._S.cur.id;
+const saved=Adv._S.list.find(c=>c.id===curId);   // by id: name lookups hit stale records from earlier runs
+console.log('  saved & reloaded:', !!saved);
+if(saved){
+  console.log('    skills kept:', Object.values(saved.skills).filter(v=>v>0).length);
+  console.log('    journal kept:', saved.journal.length, '| quests:', saved.quests.length,
+              '| assoc:', saved.associates.length, '| inv:', saved.inventory.length);
+  console.log('    date kept:', saved.journal[0].when_year+'/'+saved.journal[0].when_month+'/'+saved.journal[0].when_day);
+}
+console.log('\nERRORS:', errors.length? errors.join('\n  '):'none');

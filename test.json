@@ -1,0 +1,18 @@
+{
+	"_warnings": [ "export produced invalid JSON on this run and was replaced with this fallback — the roster/stocks below are empty as a result. Please report this (it means something in this save's data broke the JSON encoder in a new way)." ],
+	"dwarves": [],
+	"headline": {
+		"building_count": 0,
+		"item_count": 0,
+		"population": 0
+	},
+	"meta": {
+		"cur_year": 77,
+		"cur_year_tick": 83442,
+		"df_version": "v0.53.16 win64 STEAM",
+		"dfhack_version": "53.16-r1.1",
+		"exported_at": "2026-08-17T21:16:30Z",
+		"fortress_name": "Lashboards"
+	},
+	"stocks": []
+}

@@ -1,0 +1,28 @@
+# Your own imported worlds and personal data — never committed.
+# DwarfWiki creates these folders itself on first run/import.
+worlds/*
+!worlds/.gitkeep
+userdata/*
+!userdata/.gitkeep
+!userdata/images
+userdata/images/*
+!userdata/images/.gitkeep
+!userdata/fortress
+userdata/fortress/*
+!userdata/fortress/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp

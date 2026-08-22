@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#7a2e2e"/>
+  <!-- open book -->
+  <path d="M32 20 C27 16 19 14 13 15 L13 46 C19 45 27 47 32 51 Z" fill="#f4efe4"/>
+  <path d="M32 20 C37 16 45 14 51 15 L51 46 C45 45 37 47 32 51 Z" fill="#f4efe4"/>
+  <path d="M32 20 L32 51" stroke="#c9bfa0" stroke-width="1.2"/>
+  <!-- page lines -->
+  <path d="M17 22 L27 24 M17 27 L27 29 M17 32 L27 34" stroke="#c9bfa0" stroke-width="1.1" stroke-linecap="round"/>
+  <path d="M47 22 L37 24 M47 27 L37 29 M47 32 L37 34" stroke="#c9bfa0" stroke-width="1.1" stroke-linecap="round"/>
+  <!-- bookmark ribbon -->
+  <path d="M32 14 L32 26 L35.5 22.5 L39 26 L39 14 Z" fill="#c99a3f"/>
+</svg>

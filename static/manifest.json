@@ -1,0 +1,12 @@
+{
+  "name": "DwarfWiki",
+  "short_name": "DwarfWiki",
+  "description": "Offline viewer for Dwarf Fortress legends",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#efe9dc",
+  "theme_color": "#7a2e2e",
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
