@@ -316,12 +316,18 @@ function draw(){
     const sz = worldSize(p.world);
     if(p.x>vp.x1 || p.y>vp.y1 || p.x+sz.w<vp.x0 || p.y+sz.h<vp.y0) return;
     const rec = getImages(p.world);
-    // switch to the detailed render once a tile is worth ~3 screen pixels
+    // Always the plain per-tile render here, never the "detailed" one.
+    // detailed_map.png runs a domain-warp pass server-side (see
+    // generate_detailed_map in cartography.py) that nudges every sampled
+    // pixel up to ~2.6 tiles from its true position to fake organic
+    // coastlines. That's fine for the read-only Atlas view, but this
+    // editor is a precision tool -- placements, snapping, and painting
+    // all depend on what's on screen matching real tile positions. Using
+    // the warped image here made coastlines visibly slide as soon as you
+    // zoomed in, which read as a "skewed globe" glitch. Keep it crisp and
+    // exact; imageSmoothingEnabled=false above already gives the desired
+    // jagged/pixelated look at high zoom instead of a blur.
     let img = rec.lo;
-    if(z >= 3){
-      if(rec.hi) img = rec.hi;
-      else requestDetail(p.world);
-    }
     if(img && img.complete && img.naturalWidth){
       ctx.drawImage(img, t2sx(p.x), t2sy(p.y), sz.w*z, sz.h*z);
     }else{

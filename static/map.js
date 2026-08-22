@@ -109,11 +109,10 @@ async function loadWorld(name){
   STATE.heightImg=new Image(); STATE.heightImg.onload=()=>draw(); STATE.heightImg.src=API+'/w/'+name+'/heightmap.png';
   STATE.climateImg=new Image(); STATE.climateImg.onload=()=>draw(); STATE.climateImg.src=API+'/w/'+name+'/overlay/climate.png';
   STATE.drainageImg=new Image(); STATE.drainageImg.onload=()=>draw(); STATE.drainageImg.src=API+'/w/'+name+'/overlay/drainage.png';
-  STATE.detailedImg=new Image();
-  STATE.detailedReady=false;
-  toast('Rendering detailed terrain… (one-time per world, ~20-30s, then instant)');
-  STATE.detailedImg.onload=()=>{ STATE.detailedReady=true; draw(); };
-  STATE.detailedImg.src=API+'/w/'+name+'/detailed_map.png';
+  // detailed_map.png (the domain-warped "richer" render) is intentionally
+  // never fetched or drawn here anymore -- see the comment on baseImg in
+  // draw(). Only the Wall exporter still reaches for it, for one-off PNG
+  // exports where the warp reads as texture rather than a moving coastline.
   _territoryDirty=true; _borderPathsDirty=true; _coastPaths=null;
   STATE.selectedCiv=null; STATE.selectedCampaign=null;
   await Promise.all([loadSites(), loadTerritory(), loadCapitals(), loadFactions(),
@@ -342,9 +341,13 @@ function draw(){
   const sxy=tileToScreen(0,0), sx=sxy[0], sy=sxy[1];
   const dw=W*STATE.zoom, dh=H*STATE.zoom;
 
-  const baseImg = STATE.layers.topographic ? STATE.heightImg
-    : STATE.layers.simpleMap ? STATE.mapImg
-    : (STATE.detailedReady ? STATE.detailedImg : STATE.mapImg);
+  // Always the plain flat-color per-tile render, i.e. what "Simple map"
+  // used to opt into. detailed_map.png runs a server-side domain-warp pass
+  // (see generate_detailed_map in cartography.py) that nudges every sampled
+  // pixel up to ~2.6 tiles from its true position for a faux-organic look.
+  // That reads as a smeared, "drunk" map once zoomed in, so it's no longer
+  // used here regardless of the Simple map checkbox.
+  const baseImg = STATE.layers.topographic ? STATE.heightImg : STATE.mapImg;
   if(baseImg && baseImg.complete && baseImg.naturalWidth) ctx.drawImage(baseImg, sx, sy, dw, dh);
   // (the animated water shimmer that used to draw here has been removed.
   //  The flat map is now a still map. Site coronas still glow.)
@@ -810,7 +813,6 @@ function renderLayersPanel(){
     '<div class="layer-row"><input type="checkbox" id="ly-all-territory" onchange="MapView.toggleTerritoryScope(this.checked)"> Include minor governments</div>'+
     '<h3 style="margin-top:16px">Overlays</h3>'+
     layerRow('coastline','Coastline (smooth vector)',false,true)+
-    layerRow('simpleMap','Simple map (flat colors, faster)',false)+
     layerRow('topographic','Topographic (elevation)',false)+
     layerRow('climate','Climate heatmap','fake')+
     layerRow('drainage','Drainage','fake')+
