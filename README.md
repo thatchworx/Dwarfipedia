@@ -2,7 +2,8 @@
 ### Hello! 
 Dwarfipedia is a suite of tools designed to expand your Dwarf Fortress worlds in a way that I've found to be much better suited for invoking imagination and curiosity. It does this by giving every individual thing in your world a Wikipedia-style page of information. Much of this information ==is not 1:1 faithful== to what the game simulated or what it can simulate naturally. Most of it is made up. There is of course, plenty of real data, which I will cover below, but the text content of a given page is all but certain to be factually incorrect. Why do I feel this is an acceptable compromise? Well, because I've always been fascinated by the stories that this game could give to you, but I've always felt that other legends viewer software stopped a bit short of actually stimulating the imagination. It is personally hard for me to visualize a person, or a site, by looking at a table of who stole what, and who fought whom. It has proven to be much easier for me to visualize something through an easy-to-digest, if fictional, account of it. The benefits of this approach are twofold: first, it makes the history of a world considerably easier to understand and visualize. Rather than asking you to reconstruct a person or place from a collection of disconnected events, Dwarfipedia presents that information in a form that can be read and understood naturally. Second, it gives the history room to inspire the imagination. Dwarf Fortress already provides an enormous amount of factual information about the people, places, and events in a world, but there is often very little connective tissue between those facts. Dwarfipedia attempts to fill that gap, turning the raw history of a world into something that feels like a collection of stories rather than a database of records.
 
-![[dw1.png]]
+<img width="1870" height="913" alt="dw1" src="https://github.com/user-attachments/assets/cb9a793b-ddf9-4d95-b121-186320d4f52f" />
+
 
 ### How does it work? 
 For the main feature of this software, the wiki pages themselves, word and phrase banks are used to populate predetermined sections of a thing. In the screenshot example above, we've got a dwarf. The information contained in the vital record is always true to the game, but the text in the center is always going to be made up. As you can see, as with any random generation, the text can be a bit clunky at first. There are three different ways we can go about fixing this. The first, is to manually edit. If you like to write, like I do, you'll find that any page and any section can be edited on a whim. The second method, is to reroll the wordbank text. This can be done by clicking the 'Tools' button on any section header, same place you'd find the option to manually write. This would regenerate, and replace with more random strings. I've found it helpful to do this several times for each section until I've got stuff that is vaguely story shaped, and then write the stuff I personally want to expand, and use method 3 for the other stuff. Now, method 3 is entirely optional, and is not a requirement to install or use this software. Method 3 of fleshing out a page, is to use a local LLM. I've provided the software with sensible defaults for the prompts that the LLM will use, and it always pulls data from the page as its ultimate authority on context, meaning, it should write about that person or thing specifically, based on the other stuff you've written or generated about them or it. 
@@ -57,7 +58,8 @@ Step 1: Download this repo as a zip
 Step 2: Extract where you'd like this to live
 Step 3: Open the folder, and run `dwarfwiki.bat`
 Step 3a: If you are on Linux, run `./run.sh`
-![[Pasted image 20260821171050.png]]
+<img width="1875" height="919" alt="Pasted image 20260821171050" src="https://github.com/user-attachments/assets/31139094-f284-4de9-93da-23650e099aaf" />
+
 
 Step 4: The software will open in your default web browser, you'll be given this screen. 
 Step 5: Inside of Dwarf Fortress, with DFHack installed, load/generate a world, and export its legends data by using the Export XML button. 
@@ -66,10 +68,11 @@ Step 6: Once complete, browse to your game files, and find the newly minted xml 
 
 Step 7: Back in Dwarfipedia, click the relevant buttons to upload your legends.xml and your legends_plus.xml files into the software. Also, give the world a name. 
 Step 8: Click Import, wait a few moments, and you're done!
-![[Pasted image 20260821171541.png|700]]
+![[ image 20260821171541.png|700]]
 
 Upon successful import, you'll be taken to the home page for your newly imported world. From here, the sky is the limit!
-![[Pasted image 20260821171608.png]]
+<img width="1860" height="919" alt="Pasted image 20260821171608" src="https://github.com/user-attachments/assets/82e6808d-218a-4c15-94cc-76f85aaa5ab7" />
+
 
 ### Configuration
 #### General Settings: 
@@ -96,7 +99,8 @@ We've all seen the familiar LLM writing patterns. _"It's not X, it's Y."_ _"More
 ##### Biography Prompt
 The meat and potatoes. This is the one thing you're going to see the biggest personalization benefit by tuning to your preferences. By stating clearly what you want, what you don't want, the prompt in this field can be tuned to your exact desires. You can change whatever you don't like about the default prompt, or write your own entirely. 
 
-![[Pasted image 20260821173600.png]]
+<img width="1187" height="710" alt="Pasted image 20260821173600" src="https://github.com/user-attachments/assets/403aa49c-a4c1-49aa-af0c-a1ab5569dc4d" />
+
 ##### Encyclopedia Prompt
 For all other things that aren't breathing entities. I separated the two, because during testing I found that I preferred a castle to be written about differently than I wanted a person to be written about. If this is not the case for you, simply copying the biography prompt should fix that. Much the same as above, you can tweak the default or write your own for how you wish things to be written. 
 
